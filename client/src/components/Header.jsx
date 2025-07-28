@@ -20,7 +20,7 @@ const Header = () => {
       {/* Top Bar */}
       <div className="bg-gray-900 text-sm py-2 border-b border-gray-200 ">
         <div className="container mx-auto flex justify-between px-4 text-gray-700">
-          <p className='text-white'>🚚 Free shipping for standard orders over $100</p>
+          <p className='text-white'>Free shipping for standard orders over $100</p>
           <div className="flex gap-4">
             {['Help & FAQs', 'My Account', 'EN', 'USD'].map((item, idx) => (
               <a key={idx} href="#" className="text-white hover:text-blue-600 transition-colors duration-200">{item}</a>
@@ -40,7 +40,7 @@ const Header = () => {
             
             <Link to="/" className="hover:text-blue-500">Home</Link>
             <Link to="/shop" className="hover:text-blue-500">Shop</Link>
-            <Link to="/shoping-cart" className="hover:text-blue-500">Features</Link>
+            <Link to="/features" className="hover:text-blue-500">Features</Link>
             <Link to="/blog" className="hover:text-blue-500">Blog</Link>
             <Link to="/about" className="hover:text-blue-500">About</Link>
             <Link to="/contact" className="hover:text-blue-500">Contact</Link>
