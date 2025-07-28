@@ -30,7 +30,7 @@ const Shop = () => {
   return (
     <div className="bg-gray-100 mt-23 pb-140">
       <div className="container mx-auto px-4">
-        <div className="flex flex-wrap justify-between pb-52">
+        <div className="flex flex-wrap justify-between ">
           <div className="flex flex-wrap items-center mt-10 mb-10">
             <button className="text-base font-normal text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded-md py-2 px-4 mr-8 mt-2 mb-2 bg-white border border-gray-300">
               All Products

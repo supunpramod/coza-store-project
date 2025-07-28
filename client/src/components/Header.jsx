@@ -18,12 +18,12 @@ const Header = () => {
   return (
     <header className="w-full font-sans   sticky top-0 z-50  ">
       {/* Top Bar */}
-      <div className="bg-gray-100 text-sm py-2 border-b border-gray-200 ">
+      <div className="bg-gray-900 text-sm py-2 border-b border-gray-200 ">
         <div className="container mx-auto flex justify-between px-4 text-gray-700">
-          <p>🚚 Free shipping for standard orders over $100</p>
+          <p className='text-white'>🚚 Free shipping for standard orders over $100</p>
           <div className="flex gap-4">
             {['Help & FAQs', 'My Account', 'EN', 'USD'].map((item, idx) => (
-              <a key={idx} href="#" className="hover:text-blue-600 transition-colors duration-200">{item}</a>
+              <a key={idx} href="#" className="text-white hover:text-blue-600 transition-colors duration-200">{item}</a>
             ))}
           </div>
         </div>
