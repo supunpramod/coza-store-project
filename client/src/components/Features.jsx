@@ -39,8 +39,8 @@ const Features = () => {
               <p className="text-gray-600 text-sm">{feature.description}</p>
             </div>
           ))}
-        </div>
-      </div>
+        </div> 
+      </div> 
     </section>
   );
 };
