@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
+ 
+
   // State for sidebar and cart visibility
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -38,6 +42,15 @@ const Home = () => {
       buttonText: 'Shop Now'
     }
   ];
+
+// slide auto change
+  useEffect(() => {
+  const interval = setInterval(() => {
+    setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
+  }, 5000); // 5000ms = 5 seconds
+
+  return () => clearInterval(interval); // Cleanup on unmount
+}, [slides.length]);
 
   const banners = [
     { image: 'banner-04.jpg', title: 'Women', subtitle: 'New Trend', link: '/women' },
@@ -195,44 +208,69 @@ const Home = () => {
      
 
       <main>
-        {/* Hero Slider */}
-        <section className="relative">
-          <div className="relative h-screen">
-            {slides.map((slide, index) => (
-              <div 
-                key={index}
-                className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
-                style={{ backgroundImage: `url(/images/${slide.image})` }}
+       {/* Hero Slider */}
+<section className="relative">
+  <div className="relative h-screen overflow-hidden">
+    {slides.map((slide, index) => (
+      <div
+        key={index}
+        className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
+        style={{ backgroundImage: `url(/images/${slide.image})` }}
+      >
+        <div className="container h-full flex items-center justify-center">
+          <div className="text-center text-white">
+            <div className="mb-4">
+              <span className="text-xl md:text-2xl">{slide.title}</span>
+            </div>
+            <div className="mb-8">
+              <h2 className="text-3xl md:text-5xl font-bold mb-6">{slide.subtitle}</h2>
+            </div>
+            <div>
+              <a
+                href="/shop"
+                className="inline-block bg-white text-black px-8 py-3 hover:bg-red-500 transition rounded-md"
               >
-                <div className="container h-full flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <div className="mb-4">
-                      <span className="text-xl md:text-2xl">{slide.title}</span>
-                    </div>
-                    <div className="mb-8">
-                      <h2 className="text-3xl md:text-5xl font-bold mb-6">{slide.subtitle}</h2>
-                    </div>
-                    <div>
-                      <a href="/shop" className="inline-block bg-white text-black px-8 py-3 hover:bg-red-100 transition">
-                        {slide.buttonText}
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+                {slide.buttonText}
+              </a>
+            </div>
           </div>
-          
-          <div className="absolute bottom-8 left-0 right-0 flex justify-center space-x-2">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full ${index === currentSlide ? 'bg-white' : 'bg-white bg-opacity-50'}`}
-              />
-            ))}
-          </div>
-        </section>
+        </div>
+      </div>
+    ))}
+
+    {/* Left Arrow */}
+<div className="absolute top-1/2 left-4 transform -translate-y-1/2 z-10">
+  <button
+    onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+    className="bg-white text-black rounded-md p-2 shadow hover:bg-red-500 hover:text-white transition"
+  >
+    <FontAwesomeIcon icon={faArrowLeft} />
+  </button>
+</div>
+
+
+    {/* Right Arrow */}
+    <div className="absolute top-1/2 right-4 transform -translate-y-1/2 z-10">
+      <button
+        onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+        className="bg-white  text-black rounded-md p-2 shadow hover:bg-red-500 hover:text-white transition "
+      >
+        <FontAwesomeIcon icon={faArrowRight} />
+      </button>
+    </div>
+  </div>
+
+  {/* Dots */}
+  <div className="absolute bottom-8 left-0 right-0 flex justify-center space-x-2">
+    {slides.map((_, index) => (
+      <button
+        key={index}
+        onClick={() => setCurrentSlide(index)}
+        className={`w-3 h-3 rounded-full ${index === currentSlide ? 'bg-white' : 'bg-white bg-opacity-50'}`}
+      />
+    ))}
+  </div>
+</section>
 
         {/* Banners */}
         <div className="container mx-auto px-4 py-12 md:py-24">
