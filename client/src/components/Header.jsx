@@ -18,7 +18,7 @@ const Header = () => {
   return (
     <header className="w-full font-sans   sticky top-0 z-50  ">
       {/* Top Bar */}
-      <div className="bg-gray-900 text-sm py-2 border-b border-gray-200 ">
+      {/* <div className="bg-gray-900 text-sm py-2 border-b border-gray-200 ">
         <div className="container mx-auto flex justify-between px-4 text-gray-700">
           <p className='text-white'>Free shipping for standard orders over $100</p>
           <div className="flex gap-4">
@@ -27,16 +27,16 @@ const Header = () => {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Navigation */}
       <div className="bg-white shadow sticky  ">
         <div className="container mx-auto px-4 flex justify-between items-center py-4 ">
           <Link to="/" className="text-xl font-bold">
-            <h1 className='text-gray-900'>CoZA</h1>
+            <h1 className='text-black'>CoZA</h1>
           </Link>
 
-          <nav className="hidden md:flex gap-6 text-gray-800 text-sm font-medium">
+          <nav className="hidden md:flex gap-6 text-black text-sm font-medium">
             
             <Link to="/" className="hover:text-blue-500">Home</Link>
             <Link to="/shop" className="hover:text-blue-500">Shop</Link>
@@ -46,7 +46,7 @@ const Header = () => {
             <Link to="/contact" className="hover:text-blue-500">Contact</Link>
           </nav>
 
-          <div className="flex gap-4 items-center text-gray-700">
+          <div className="flex gap-4 items-center text-black">
             <button onClick={() => setShowSearch(true)} className="hover:text-blue-600 transition"><AiOutlineSearch size={20} /></button>
             <button onClick={() => setShowCart(true)} className="relative hover:text-blue-600 transition">
               <MdShoppingCart size={22} />
@@ -100,8 +100,8 @@ const Header = () => {
             <div className="mt-6 text-right font-semibold text-gray-800">Total: ${total.toFixed(2)}</div>
 
             <div className="mt-4 flex flex-col gap-2">
-              <Link to="/shoping-cart" className="bg-blue-600 text-white py-2 text-center rounded hover:bg-blue-700 transition">View Cart</Link>
-              <Link to="/shoping-cart" className="bg-green-600 text-white py-2 text-center rounded hover:bg-green-700 transition">Check Out</Link>
+              <Link to="/shoping-cart" className="bg-black text-white py-2 text-center rounded hover:bg-blue-700 transition">View Cart</Link>
+              <Link to="/shoping-cart" className="bg-black text-white py-2 text-center rounded hover:bg-green-700 transition">Check Out</Link>
             </div>
           </div>
         </div>

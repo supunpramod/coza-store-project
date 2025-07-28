@@ -213,7 +213,7 @@ const Home = () => {
                       <h2 className="text-3xl md:text-5xl font-bold mb-6">{slide.subtitle}</h2>
                     </div>
                     <div>
-                      <a href="/shop" className="inline-block bg-white text-black px-8 py-3 hover:bg-gray-100 transition">
+                      <a href="/shop" className="inline-block bg-white text-black px-8 py-3 hover:bg-red-100 transition">
                         {slide.buttonText}
                       </a>
                     </div>
@@ -250,7 +250,7 @@ const Home = () => {
                     <span className="block text-sm">{banner.subtitle}</span>
                   </div>
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <a href={banner.link} className="text-sm font-medium border-b border-white pb-1">
+                    <a href={banner.link} className="text-sm font-medium border-b border-white pb-1 hover:text-red-500">
                       Shop Now
                     </a>
                   </div>
