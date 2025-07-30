@@ -46,7 +46,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
             <span className="bg-white text-blue-700 rounded-lg p-1 mr-2">
               <HomeIcon className="h-5 w-5" />
             </span>
-            Restaurant Admin
+           CoZA Admin Panel
           </h1>
         ) : (
           <div className="bg-white text-blue-700 rounded-lg p-1 mx-auto">
