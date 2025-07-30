@@ -40,7 +40,7 @@ const Footer = () => {
                 placeholder="email@example.com"
                 className="w-full px-4 py-2 bg-transparent border border-gray-500 text-white placeholder-gray-400"
               />
-              <button className="w-full px-4 py-2 bg-pink-600 hover:bg-pink-500">Subscribe</button>
+              <button className="w-full px-4 py-2 bg-white text-black hover:bg-blue-500 rounded-md">Subscribe</button>
             </form>
           </div>
         </div>
