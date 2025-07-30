@@ -15,7 +15,7 @@ import Contact from "./components/Contact";
 import Dashboard from "./dashboard components/Dashboard.jsx";
 import Sidebar from "./dashboard components/Sidebar.jsx";
 import Topbar from "./dashboard components/Topbar.jsx";
-
+import Productmanage from "./dashboard components/Productmanage.jsx";
 // Dashboard Layout Component (මෙලෙසම තබන්න)
 const DashboardLayout = ({ sidebarOpen, setSidebarOpen }) => {
   return (
@@ -60,6 +60,7 @@ function App() {
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/productmanage" element={<Productmanage />} />
         </Route>
 
         {/* 404 Page */}

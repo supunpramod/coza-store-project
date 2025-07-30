@@ -14,7 +14,7 @@ import {
 
 const navItems = [
   { name: 'Dashboard', icon: HomeIcon, path: '/dashboard' },
-  { name: 'Food Menu', icon: UsersIcon, path: '/foodmenu' },
+  { name: 'Product Manage', icon: UsersIcon, path: '/productmanage' },
   { name: 'Chefs Manage', icon: FolderIcon, path: '/chefsmanage' },
   { name: 'Table Booking', icon: CalendarIcon, path: '/tablebooking' },
   { name: 'Blog Manage', icon: ChartBarIcon, path: '/blogmanage' },
@@ -33,7 +33,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
   return (
     <div className={`
       ${sidebarOpen ? 'w-64' : 'w-20'} 
-      bg-gradient-to-b from-blue-700 to-blue-800 
+      bg-gradient-to-b from-blue-700 to-black
       text-white 
       transition-all duration-300 ease-in-out 
       h-screen flex flex-col
