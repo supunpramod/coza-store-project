@@ -32,7 +32,7 @@ const Shop = () => {
   ];
 
   return (
-    <div className="bg-gray-100  pb-36">
+    <div className="bg-gray-100 pb-36">
       <div className="container mx-auto px-4">
 
         {/* Filter Buttons */}

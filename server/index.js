@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import itemRoutes from './routes/itemRoutes.js';
 import cors from 'cors';
 
+
 const app = express();
 app.use(cors()); 
 const PORT = process.env.PORT || 3000;
