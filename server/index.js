@@ -190,6 +190,63 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 
+
+
+
+
+// contacts
+const contactMessageSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      match: [/.+\@.+\..+/, 'Please enter a valid email address'],
+    },
+    msg: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  {
+    timestamps: true, // automatically adds createdAt and updatedAt
+  }
+);
+
+const ContactMessage = mongoose.model('ContactMessage', contactMessageSchema);
+
+// ▶ POST a contact message
+app.post('/messages', async (req, res) => {
+  try {
+    const { email, msg } = req.body;
+
+    if (!email || !msg) {
+      return res.status(400).json({ message: 'Email and message are required.' });
+    }
+
+    const newMessage = new ContactMessage({ email, msg });
+    await newMessage.save();
+
+    res.status(201).json({ message: 'Message sent successfully!', data: newMessage });
+  } catch (error) {
+    res.status(500).json({ message: 'Something went wrong.', error: error.message });
+  }
+});
+
+// ▶ GET all contact messages (optional)
+app.get('/messages', async (req, res) => {
+  try {
+    const messages = await ContactMessage.find().sort({ createdAt: -1 });
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching messages.', error: error.message });
+  }
+});
+
+
+
+
 // ========= Start Server ==========
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
