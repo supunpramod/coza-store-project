@@ -96,7 +96,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
       </nav>
 
       {/* Bottom Actions */}
-      <div className="w-full p-3 border-t border-blue-600">
+      <div className="w-full p-3 border-t border-transparent">
         <button className={`
           flex items-center w-full p-3 
           hover:bg-blue-600/70 
