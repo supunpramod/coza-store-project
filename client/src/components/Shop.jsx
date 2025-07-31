@@ -32,11 +32,13 @@ const Shop = () => {
   ];
 
   return (
-    <div className="bg-gray-100 pb-36">
+    <div className="bg-gray-100 py-6">
+      <div className='text-center '><h1 className="text-3xl font-bold text-gray-800 mb-4">Shop</h1></div>
       <div className="container mx-auto px-4">
 
         {/* Filter Buttons */}
         <div className="flex flex-wrap justify-between items-center py-10">
+          
           <div className="flex flex-wrap gap-3">
             {categories.map((cat) => (
               <button

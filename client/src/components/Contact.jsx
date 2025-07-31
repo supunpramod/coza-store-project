@@ -4,7 +4,8 @@ const Contact = () => {
   return (
     <div>
       {/* Contact Section */}
-      <section className="bg-white py-16 px-6">
+      <section className="bg-white py-6 px-6">
+        <div className='text-center pb-5'><h1 className="text-3xl font-bold text-gray-800 mb-4">Contacts</h1></div>
         <div className="max-w-6xl mx-auto flex flex-wrap gap-10">
           {/* Form Section */}
           <div className="w-full md:w-[48%] bg-gray-50 rounded-xl p-10 shadow-sm">
