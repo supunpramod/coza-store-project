@@ -15,9 +15,9 @@ import {
 const navItems = [
   { name: 'Dashboard', icon: HomeIcon, path: '/dashboard' },
   { name: 'Product Manage', icon: UsersIcon, path: '/productmanage' },
-  { name: 'Chefs Manage', icon: FolderIcon, path: '/chefsmanage' },
-  { name: 'Table Booking', icon: CalendarIcon, path: '/tablebooking' },
-  { name: 'Blog Manage', icon: ChartBarIcon, path: '/blogmanage' },
+  { name: 'Blog Manage', icon: FolderIcon, path: '/blogmanage' },
+  
+  
   { name: 'Contact Show', icon: CogIcon, path: '/contactshow' },
 ];
 

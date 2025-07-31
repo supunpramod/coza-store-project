@@ -1,70 +1,163 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import itemRoutes from './routes/itemRoutes.js';
 import cors from 'cors';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
 
+// ======== ES Module "__dirname" Setup =========
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+// =========== App & Middleware =================
 const app = express();
-app.use(cors()); 
 const PORT = process.env.PORT || 3000;
-
-// Middleware to parse JSON
+app.use(cors());
 app.use(express.json());
+// Serve images statically from /uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// MongoDB connection string (replace with your own)
+// =========== MongoDB Connection ===============
 const MONGO_URI = 'mongodb+srv://pramodsupun06:SUdCnqI7ZdMmV9st@cluster0.uodsnzh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-
-// Connect to MongoDB Atlas (fixed version)
 mongoose.connect(MONGO_URI)
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+  .then(() => console.log("MongoDB connected 🟢"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
-  app.use('/api', itemRoutes);
+// =========== Multer Setup for Blog Images ============
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath);
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const name = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+    cb(null, name);
+  },
+});
+const upload = multer({ storage });
 
-// // Define simple schema & model for testing
-// const UserSchema = new mongoose.Schema({
-//   name: String,
-//   email: String,
-// });
+// =========== Mongoose Schemas =======================
 
-// const User = mongoose.model('User', UserSchema);
+// --- BlogPost Model ---
+const blogPostSchema = new mongoose.Schema({
+  image: { type: String, required: true },
+  date: { type: String, required: true },
+  monthYear: { type: String, required: true },
+  title: { type: String, required: true },
+  desc: { type: String, required: true },
+  author: { type: String, default: 'Admin' },
+  categories: { type: [String], default: ['Fashion', 'StreetStyle', 'Couple'] },
+  commentsCount: { type: Number, default: 0 },
+}, { timestamps: true });
 
-// // POST route to add user
-// app.post('/users', async (req, res) => {
-//   try {
-//     const user = new User(req.body);
-//     const savedUser = await user.save();
-//     res.status(201).json(savedUser);
-//   } catch (err) {
-//     res.status(400).json({ error: err.message });
-//   }
-// });
+const BlogPost = mongoose.model('BlogPost', blogPostSchema);
 
-// // GET all users
-// app.get('/users', async (req, res) => {
-//   try {
-//     const users = await User.find();
-//     res.json(users);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// });
-
-
-
-// Schema
+// --- Product Model ---
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  price: { type: String, required: true }, // Use Number if not using "$"
+  price: { type: String, required: true }, // Or Number if you don't use "$"
   category: { type: String, required: true },
   image: { type: String, required: true }
 }, { timestamps: true });
 
 const Product = mongoose.model('Product', productSchema);
 
-// ====== ROUTES ======
+// ======================= ROUTES =============================
 
-// ▶ Add product
+// --- BLOG ROUTES ---
+
+// Get all blogs
+app.get('/api/blogs', async (req, res) => {
+  try {
+    const posts = await BlogPost.find().sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get single blog
+app.get('/api/blogs/:id', async (req, res) => {
+  try {
+    const post = await BlogPost.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Create blog (with image upload)
+app.post('/api/blogs', upload.single('image'), async (req, res) => {
+  try {
+    const { date, monthYear, title, desc, author, categories } = req.body;
+    const newPost = new BlogPost({
+      image: `/uploads/${req.file.filename}`,
+      date,
+      monthYear,
+      title,
+      desc,
+      author,
+      categories: categories ? categories.split(',') : undefined,
+    });
+    const saved = await newPost.save();
+    res.status(201).json(saved);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Update blog (optionally with new image)
+app.put('/api/blogs/:id', upload.single('image'), async (req, res) => {
+  try {
+    const updateData = { ...req.body };
+    if (req.file) {
+      updateData.image = `/uploads/${req.file.filename}`;
+    }
+    if (updateData.categories && typeof updateData.categories === 'string') {
+      updateData.categories = updateData.categories.split(',');
+    }
+    const updated = await BlogPost.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Delete blog (and delete image file)
+app.delete('/api/blogs/:id', async (req, res) => {
+  try {
+    const post = await BlogPost.findByIdAndDelete(req.params.id);
+    if (post && post.image) {
+      const filePath = path.join(__dirname, post.image);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+    res.json({ message: 'Post deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- PRODUCT ROUTES ---
+
+// Get all products
+app.get('/api/products', async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Create product
 app.post('/api/products', async (req, res) => {
   try {
     const product = new Product(req.body);
@@ -75,22 +168,10 @@ app.post('/api/products', async (req, res) => {
   }
 });
 
-// ▶ Get all products
-app.get('/api/products', async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ▶ Update product
+// Update product
 app.put('/api/products/:id', async (req, res) => {
   try {
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true
-    });
+    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ error: 'Product not found' });
     res.json(updated);
   } catch (err) {
@@ -98,7 +179,7 @@ app.put('/api/products/:id', async (req, res) => {
   }
 });
 
-// ▶ Delete product
+// Delete product
 app.delete('/api/products/:id', async (req, res) => {
   try {
     const deleted = await Product.findByIdAndDelete(req.params.id);
@@ -109,15 +190,7 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
-
-
+// ========= Start Server ==========
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });
