@@ -18,6 +18,8 @@ import Topbar from "./dashboard components/Topbar.jsx";
 import Productmanage from "./dashboard components/Productmanage.jsx"; 
 import Blogmanage from "./dashboard components/Blogmanage.jsx";
 import Contactshow from "./dashboard components/Contactshow.jsx";
+import Registerpage from "./dashboard components/Registerpage.jsx";
+import Loginpage from "./dashboard components/Loginpage.jsx";
 // Dashboard Layout Component (මෙලෙසම තබන්න)
 const DashboardLayout = ({ sidebarOpen, setSidebarOpen }) => {
   return (
@@ -65,8 +67,12 @@ function App() {
           <Route path="/productmanage" element={<Productmanage />} />
           <Route path="/blogmanage" element={<Blogmanage />} />
           <Route path="/contactshow" element={<Contactshow />} />
+          <Route path="/registerpage" element={<Registerpage />} />
+          
           
         </Route>
+        <Route path="/register" element={<Registerpage />} />
+        <Route path="/login" element={<Loginpage />} />
 
         {/* 404 Page */}
         <Route
@@ -76,6 +82,7 @@ function App() {
           }
         />
       </Routes>
+      
 
       
     </BrowserRouter>

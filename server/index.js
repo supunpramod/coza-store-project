@@ -244,6 +244,23 @@ app.get('/messages', async (req, res) => {
   }
 });
 
+// ▶ DELETE a contact message by ID
+app.delete('/messages/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedMessage = await ContactMessage.findByIdAndDelete(id);
+
+    if (!deletedMessage) {
+      return res.status(404).json({ message: 'Message not found.' });
+    }
+
+    res.status(200).json({ message: 'Message deleted successfully.', data: deletedMessage });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting message.', error: error.message });
+  }
+});
+
 
 
 
