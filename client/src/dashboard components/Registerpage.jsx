@@ -1,57 +1,67 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export default function Registerpage() {
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
-  const [showPassword, setShowPassword] = useState(false)
-  const [errors, setErrors] = useState({})
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' });
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-    setErrors({ ...errors, [e.target.name]: '' })
-  }
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' });
+  };
 
   const validate = () => {
-    const err = {}
-    if (!form.name.trim()) err.name = 'Name is required'
-    if (!form.email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) err.email = 'Enter a valid email'
-    if (form.password.length < 6) err.password = 'Password must be at least 6 characters'
-    if (form.password !== form.confirm) err.confirm = 'Passwords do not match'
-    return err
-  }
+    const err = {};
+    if (!form.name.trim()) err.name = 'Name is required';
+    if (!form.email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) err.email = 'Enter a valid email';
+    if (form.password.length < 6) err.password = 'Password must be at least 6 characters';
+    if (form.password !== form.confirm) err.confirm = 'Passwords do not match';
+    return err;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const err = validate()
-    if (Object.keys(err).length) return setErrors(err)
+    e.preventDefault();
+    const err = validate();
+    if (Object.keys(err).length) return setErrors(err);
 
-    setLoading(true)
-    setSuccess(false)
+    setLoading(true);
+    setSuccess(false);
 
     try {
       const res = await axios.post('http://localhost:3000/api/register', {
         name: form.name,
         email: form.email,
         password: form.password
-      })
+      });
 
-      console.log('Register success:', res.data)
-      setSuccess(true)
-      setForm({ name: '', email: '', password: '', confirm: '' })
+      console.log('Register success:', res.data);
+      setSuccess(true);
+      setForm({ name: '', email: '', password: '', confirm: '' });
+
+      // Navigate to login page after success
+      navigate("/login");
+
     } catch (error) {
-      console.error('Register error:', error.response?.data || error.message)
+      console.error('Register error:', error.response?.data || error.message);
       if (error.response?.data?.message) {
-        setErrors({ api: error.response.data.message })
+        setErrors({ api: error.response.data.message });
       } else {
-        setErrors({ api: 'Something went wrong. Please try again.' })
+        setErrors({ api: 'Something went wrong. Please try again.' });
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+
+  
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 export default function Loginpage() {
   const [form, setForm] = useState({ email: '', password: '' })
@@ -7,10 +8,13 @@ export default function Loginpage() {
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [serverError, setServerError] = useState('')
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
     setErrors({ ...errors, [e.target.name]: '' })
+    setServerError('')
   }
 
   const validate = () => {
@@ -20,15 +24,31 @@ export default function Loginpage() {
     return err
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const err = validate()
     if (Object.keys(err).length) return setErrors(err)
+
     setLoading(true)
-    setTimeout(() => {
+    setServerError('')
+    try {
+      const res = await axios.post('http://localhost:3000/api/login', form)
       setLoading(false)
       setSuccess(true)
-    }, 900)
+      
+      // Save token for future requests
+      localStorage.setItem('token', res.data.token)
+
+      // Redirect after a short delay
+      setTimeout(() => navigate('/dashboard'), 1200)
+    } catch (error) {
+      setLoading(false)
+      if (error.response) {
+        setServerError(error.response.data.message || 'Login failed')
+      } else {
+        setServerError('Server is not responding')
+      }
+    }
   }
 
   return (
@@ -41,8 +61,7 @@ export default function Loginpage() {
               <path fill="currentColor" d="M96 224c0-70.7 57.3-128 128-128h192c70.7 0 128 57.3 128 128v64c0 70.7-57.3 128-128 128H224c-70.7 0-128-57.3-128-128v-64z"></path>
             </svg>
             <h2 className="text-3xl font-bold">Welcome Back to CoZA</h2>
-            <p className="mt-3 text-sm opacity-95">Log in to continue and manage your business with our powerful tools.
-            </p>
+            <p className="mt-3 text-sm opacity-95">Log in to continue and manage your business with our powerful tools.</p>
           </div>
         </div>
 
@@ -52,7 +71,9 @@ export default function Loginpage() {
               <div className="bg-indigo-600 w-10 h-10 rounded-md flex items-center justify-center text-white font-bold">CZ</div>
               <h3 className="text-xl font-semibold">Sign in</h3>
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-300">New here? <a href="#" className="text-indigo-600 dark:text-indigo-400 font-medium"><Link to = "/register">Create account</Link></a></div>
+            <div className="text-sm text-gray-500 dark:text-gray-300">
+              New here? <Link to="/register" className="text-indigo-600 dark:text-indigo-400 font-medium">Create account</Link>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -85,6 +106,7 @@ export default function Loginpage() {
               </button>
             </div>
 
+            {serverError && <div className="p-3 rounded bg-red-50 text-red-800 text-sm">{serverError}</div>}
             {success && <div className="p-3 rounded bg-green-50 text-green-800 text-sm">Login successful! Redirecting...</div>}
 
             <div className="flex items-center justify-center gap-3">
