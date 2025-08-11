@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Loginpage() {
   const [form, setForm] = useState({ email: '', password: '' })
@@ -51,7 +52,7 @@ export default function Loginpage() {
               <div className="bg-indigo-600 w-10 h-10 rounded-md flex items-center justify-center text-white font-bold">CZ</div>
               <h3 className="text-xl font-semibold">Sign in</h3>
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-300">New here? <a href="#" className="text-indigo-600 dark:text-indigo-400 font-medium">Create account</a></div>
+            <div className="text-sm text-gray-500 dark:text-gray-300">New here? <a href="#" className="text-indigo-600 dark:text-indigo-400 font-medium"><Link to = "/register">Create account</Link></a></div>
           </div>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">

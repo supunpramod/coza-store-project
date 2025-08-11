@@ -1,22 +1,6 @@
-/*
-CoZA Register Page - React + Tailwind CSS
-Single-file React component (default export) ready to paste into a CRA/Vite React app.
-
-How to use:
-1. Ensure Tailwind CSS is configured in your project.
-2. Save this file as `CozaRegister.jsx` and import it where you want to show the page.
-3. (Optional) Replace the illustration with your brand image and tweak colors in Tailwind config.
-
-Features:
-- Responsive split layout (illustration left, form right)
-- Simple client-side validation (name, email, password match)
-- Show/hide password toggle
-- Social sign-up buttons
-- Accessible labels and focus states
-- Light / dark friendly styles using Tailwind classes
-*/
-
 import React, { useState } from 'react'
+import axios from 'axios'
+import { Link } from 'react-router-dom'
 
 export default function Registerpage() {
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
@@ -39,16 +23,34 @@ export default function Registerpage() {
     return err
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const err = validate()
     if (Object.keys(err).length) return setErrors(err)
+
     setLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false)
+    setSuccess(false)
+
+    try {
+      const res = await axios.post('http://localhost:3000/api/register', {
+        name: form.name,
+        email: form.email,
+        password: form.password
+      })
+
+      console.log('Register success:', res.data)
       setSuccess(true)
-    }, 900)
+      setForm({ name: '', email: '', password: '', confirm: '' })
+    } catch (error) {
+      console.error('Register error:', error.response?.data || error.message)
+      if (error.response?.data?.message) {
+        setErrors({ api: error.response.data.message })
+      } else {
+        setErrors({ api: 'Something went wrong. Please try again.' })
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -62,8 +64,7 @@ export default function Registerpage() {
               <path fill="currentColor" d="M96 224c0-70.7 57.3-128 128-128h192c70.7 0 128 57.3 128 128v64c0 70.7-57.3 128-128 128H224c-70.7 0-128-57.3-128-128v-64z"></path>
             </svg>
             <h2 className="text-3xl font-bold">Join CoZA</h2>
-            <p className="mt-3 text-sm opacity-95">Create your account and start exploring powerful features to boost your business.
-            </p>
+            <p className="mt-3 text-sm opacity-95">Create your account and start exploring powerful features to boost your business.</p>
 
             <ul className="mt-6 text-left space-y-3 text-sm">
               <li className="flex items-start gap-3">
@@ -85,7 +86,6 @@ export default function Registerpage() {
                 <span>Secure & reliable</span>
               </li>
             </ul>
-
           </div>
         </div>
 
@@ -96,10 +96,12 @@ export default function Registerpage() {
               <div className="bg-indigo-600 w-10 h-10 rounded-md flex items-center justify-center text-white font-bold">CZ</div>
               <h3 className="text-xl font-semibold">Create account</h3>
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-300">Already have an account? <a href="#" className="text-indigo-600 dark:text-indigo-400 font-medium">Sign in</a></div>
+            <div className="text-sm text-gray-500 dark:text-gray-300">Already have an account? <a href="#" className="text-indigo-600 dark:text-indigo-400 font-medium"><Link to="/login">Sign in</Link></a></div>
           </div>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            {errors.api && <div className="p-3 rounded bg-red-50 text-red-800 text-sm">{errors.api}</div>}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Full name</label>
               <input name="name" value={form.name} onChange={handleChange} className={`mt-1 block w-full rounded-lg border px-4 py-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition ${errors.name ? 'ring-2 ring-red-400' : ''}`} placeholder="Your name" />

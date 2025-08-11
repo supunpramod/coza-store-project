@@ -269,7 +269,7 @@ app.delete('/messages/:id', async (req, res) => {
 });
 
 
-
+// register and login
 // User Schema
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
