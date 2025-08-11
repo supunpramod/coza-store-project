@@ -5,6 +5,11 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import bcrypt from 'bcrypt';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+
 
 // ======== ES Module "__dirname" Setup =========
 const __filename = fileURLToPath(import.meta.url);
@@ -15,12 +20,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
+dotenv.config();
+
 // Serve images statically from /uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // =========== MongoDB Connection ===============
-const MONGO_URI = 'mongodb+srv://pramodsupun06:SUdCnqI7ZdMmV9st@cluster0.uodsnzh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-mongoose.connect(MONGO_URI)
+
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected 🟢"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -260,6 +267,81 @@ app.delete('/messages/:id', async (req, res) => {
     res.status(500).json({ message: 'Error deleting message.', error: error.message });
   }
 });
+
+
+// register
+
+// ----- User schema -----
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true, lowercase: true },
+  password: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+// ----- User model -----
+const User = mongoose.model('User', userSchema);
+
+// ----- Middleware for auth -----
+function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization || "";
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null;
+  if (!token) return res.status(401).json({ message: "No token provided" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.id;
+    next();
+  } catch {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+}
+
+// Test route
+app.get("/", (req, res) => {
+  res.send({ ok: true, message: "CoZA API running" });
+});
+
+// Register
+app.post("/api/auth/register", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password)
+      return res.status(400).json({ message: "All fields are required" });
+
+    const existing = await User.findOne({ email });
+    if (existing)
+      return res.status(409).json({ message: "Email already in use" });
+
+    const hash = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hash });
+    await user.save();
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.status(201).json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+
+
+
+
+
+
+
 
 
 
