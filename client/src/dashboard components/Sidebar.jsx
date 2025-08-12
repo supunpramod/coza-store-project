@@ -1,11 +1,8 @@
-
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   HomeIcon, 
   UsersIcon, 
   FolderIcon, 
-  CalendarIcon, 
-  ChartBarIcon, 
   CogIcon, 
   ArrowRightOnRectangleIcon,
   ChevronLeftIcon,
@@ -24,7 +21,13 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();
   
   const handleLogout = () => {
+    // Remove JWT and user data
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
+
+    // Optional: clear other app state if needed
+    sessionStorage.clear();
+
     navigate('/login');
   };
 
@@ -44,7 +47,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
             <span className="bg-white text-blue-700 rounded-lg p-1 mr-2">
               <HomeIcon className="h-5 w-5" />
             </span>
-           CoZA Admin Panel
+            CoZA Admin Panel
           </h1>
         ) : (
           <div className="bg-white text-blue-700 rounded-lg p-1 mx-auto">
@@ -119,20 +122,6 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
           {sidebarOpen && <span className="ml-3">Logout</span>}
         </button>
       </div>
-
-      {/* Collapsed Tooltips */}
-      {!sidebarOpen && (
-        <div className="absolute left-20 ml-2 hidden group-hover:block">
-          {navItems.map(item => (
-            <div 
-              key={item.name} 
-              className="bg-gray-800 text-white text-sm px-2 py-1 rounded mb-1 whitespace-nowrap"
-            >
-              {item.name}
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };

@@ -269,36 +269,67 @@ app.delete('/messages/:id', async (req, res) => {
 });
 
 
-// register and login
-// User Schema
+// User Schema with Roles
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true },
+  role: { 
+    type: String, 
+    enum: ['user', 'admin'], // allowed values
+    default: 'user' // default role
+  },
   createdAt: { type: Date, default: Date.now }
 });
 
 const User = mongoose.model('User', userSchema);
 
+
 // JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-123';
 
-// Auth Middleware
+
+
+
+
+
+
+// JWT Middleware
 const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  
-  if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
-  }
+  const token = req.header("Authorization")?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.userId = decoded.id;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // { id, role }
     next();
   } catch (err) {
-    return res.status(401).json({ message: 'Invalid token' });
+    res.status(400).json({ message: "Invalid token." });
   }
 };
+
+// Admin Middleware
+const adminMiddleware = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied. Admins only." });
+  }
+  next();
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Routes
 // Register
@@ -335,6 +366,10 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
+
+
+
+
 // Login
 app.post('/api/login', async (req, res) => {
   try {
@@ -357,20 +392,34 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Create token
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1d' });
+    // Create token (include role in payload)
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '1d' }
+    );
 
-    // Send response
+    // Send response with role
     res.json({
       message: 'Login successful',
-      user: { id: user._id, name: user.name, email: user.email },
+      user: { 
+        id: user._id, 
+        name: user.name, 
+        email: user.email,
+        role: user.role 
+      },
       token
     });
+
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+
+
+
 
 // Protected route
 app.get('/api/profile', authMiddleware, async (req, res) => {
