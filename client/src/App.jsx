@@ -20,6 +20,7 @@ import Blogmanage from "./dashboard components/Blogmanage.jsx";
 import Contactshow from "./dashboard components/Contactshow.jsx";
 import Registerpage from "./dashboard components/Registerpage.jsx";
 import Loginpage from "./dashboard components/Loginpage.jsx";
+
 // Dashboard Layout Component (මෙලෙසම තබන්න)
 const DashboardLayout = ({ sidebarOpen, setSidebarOpen }) => {
   return (
