@@ -64,15 +64,8 @@ const blogPostSchema = new mongoose.Schema({
 
 const BlogPost = mongoose.model('BlogPost', blogPostSchema);
 
-// --- Product Model ---
-const productSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  price: { type: String, required: true }, // Or Number if you don't use "$"
-  category: { type: String, required: true },
-  image: { type: String, required: true }
-}, { timestamps: true });
 
-const Product = mongoose.model('Product', productSchema);
+
 
 // ======================= ROUTES =============================
 
@@ -151,6 +144,17 @@ app.delete('/api/blogs/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+// --- Product Model ---
+const productSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  price: { type: String, required: true }, // Or Number if you don't use "$"
+  category: { type: String, required: true },
+  image: { type: String, required: true }
+}, { timestamps: true });
+
+const Product = mongoose.model('Product', productSchema);
 
 // --- PRODUCT ROUTES ---
 
